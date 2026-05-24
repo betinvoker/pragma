@@ -77,3 +77,31 @@ class UserRegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['login', 'last_name', 'first_name', 'patronymic', 'company', 'phone', 'email', 'jur_address']
+        widgets = {
+            'login': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'patronymic': forms.TextInput(attrs={'class': 'form-control'}),
+            'company': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'jur_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+        labels = {
+            'login': 'Логин',
+            'last_name': 'Фамилия',
+            'first_name': 'Имя',
+            'patronymic': 'Отчество',
+            'company': 'Название компании',
+            'phone': 'Номер телефона',
+            'email': 'Email',
+            'jur_address': 'Юридический адрес',
+        }
+
+    def clean_login(self):
+        return self.instance.login

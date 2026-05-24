@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Заказ #{{ order.id }}</h2>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Информация о заказе</div>
+      <div class="card-body">
+        <p><strong>Статус:</strong>
+          {% if order.status == '1' %}<span class="badge bg-primary">Новый</span>
+          {% elif order.status == '2' %}<span class="badge bg-info">Зарегистрирован</span>
+          {% elif order.status == '3' %}<span class="badge bg-warning">В работе</span>
+          {% elif order.status == '4' %}<span class="badge bg-success">Завершен</span>
+          {% elif order.status == '5' %}<span class="badge bg-secondary">Отменен</span>
+          {% elif order.status == '0' %}<span class="badge bg-danger">Ошибка</span>
+          {% endif %}
+        </p>
+        <p><strong>Сумма:</strong> {{ order.total_amount }} руб.</p>
+        <p><strong>Создан:</strong> {{ order.datetime_create|date:"d.m.Y H:i" }}</p>
+        <p><strong>Менеджер:</strong> {{ order.manager.last_name|default:"&mdash;" }} {{ order.manager.first_name|default:"" }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Информация о клиенте</div>
+      <div class="card-body">
+        <p><strong>Имя:</strong> {{ order.client.last_name }} {{ order.client.first_name }} {{ order.client.patronymic|default:"" }}</p>
+        <p><strong>Компания:</strong> {{ order.client.company|default:"&mdash;" }}</p>
+        <p><strong>Телефон:</strong> {{ order.client.phone|default:"&mdash;" }}</p>
+        <p><strong>Email:</strong> {{ order.client.email|default:"&mdash;" }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">Товары</div>
+  <div class="card-body">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Товар</th>
+          <th>Количество</th>
+          <th>Цена</th>
+          <th>Сумма</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in order.items.all %}
+        <tr>
+          <td>{{ it.item.name }}</td>
+          <td>{{ it.quantity }}</td>
+          <td>{{ it.item.price }} руб.</td>
+          <td>{{ it.price }} руб.</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center">Нет товаров</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">Документы</div>
+  <div class="card-body">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Тип</th>
+          <th>Действие</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doc in order.documents.all %}
+        <tr>
+          <td>{{ doc.title }}</td>
+          <td>
+            {% if doc.doc_type == 'INV' %}<span class="badge bg-primary">Счет-фактура</span>
+            {% elif doc.doc_type == 'CTR' %}<span class="badge bg-success">Договор</span>
+            {% elif doc.doc_type == 'AGR' %}<span class="badge bg-info">Соглашение</span>
+            {% endif %}
+          </td>
+          <td><a href="#" class="btn btn-sm btn-outline-primary">Скачать</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="text-center text-muted">Нет документов</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<a href="{% url 'manager_orders' %}" class="btn btn-outline-secondary">Назад к заказам</a>
+{% endblock %}

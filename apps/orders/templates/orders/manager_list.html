@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Заказы</h2>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Клиент</th>
+        <th>Товары</th>
+        <th>Статус</th>
+        <th>Менеджер</th>
+        <th>Сумма</th>
+        <th>Создан</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td><a href="{% url 'manager_order_detail' o.id %}">#{{ o.id }}</a></td>
+        <td>{{ o.client.last_name }} {{ o.client.first_name }}</td>
+        <td>
+          {% for it in o.items.all %}
+            <div>{{ it.quantity }} x {{ it.item.name }}</div>
+          {% endfor %}
+        </td>
+        <td>
+          {% if o.status == '1' %}<span class="badge bg-primary">Новый</span>
+          {% elif o.status == '2' %}<span class="badge bg-info">Зарегистрирован</span>
+          {% elif o.status == '3' %}<span class="badge bg-warning">В работе</span>
+          {% elif o.status == '4' %}<span class="badge bg-success">Завершен</span>
+          {% elif o.status == '5' %}<span class="badge bg-secondary">Отменен</span>
+          {% elif o.status == '0' %}<span class="badge bg-danger">Ошибка</span>
+          {% endif %}
+        </td>
+        <td>{{ o.manager.last_name|default:"&mdash;" }}</td>
+        <td>{{ o.total_amount }} руб.</td>
+        <td>{{ o.datetime_create|date:"d.m.Y H:i" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center">Нет заказов</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

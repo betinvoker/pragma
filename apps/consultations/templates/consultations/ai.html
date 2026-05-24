@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>AI-консультации</h2>
+<form method="post">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="question" class="form-label">Задайте вопрос AI</label>
+    <textarea id="question" name="question" class="form-control" rows="3" placeholder="Введите ваш вопрос..."></textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">Спросить</button>
+</form>
+<hr>
+<h3>История консультаций</h3>
+{% for c in consultations %}
+  <div class="card mb-2">
+    <div class="card-body">
+      <small class="text-muted">{{ c.datetime_create|date:"d.m.Y H:i" }}</small>
+      <div class="mt-1"><strong>Вопрос:</strong> {{ c.question }}</div>
+      <div><strong>Ответ:</strong> {{ c.answer }}</div>
+    </div>
+  </div>
+{% empty %}
+  <p class="text-muted">Нет консультаций.</p>
+{% endfor %}
+{% endblock %}

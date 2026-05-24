@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <h2>Документы</h2>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Поиск документа</h5>
+    <form method="get" class="d-flex gap-2">
+      <input type="text" name="search" class="form-control" placeholder="Название документа..." value="{{ search|default:'' }}">
+      <button type="submit" class="btn btn-outline-primary">Найти</button>
+      {% if search %}
+      <a href="{% url 'manager_documents' %}" class="btn btn-outline-secondary">Очистить</a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Список документов</h5>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Тип</th>
+            <th>Заказ</th>
+            <th>Дата создания</th>
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in documents %}
+          <tr>
+            <td>{{ d.id }}</td>
+            <td>{{ d.title }}</td>
+            <td>
+              {% if d.doc_type == 'INV' %}<span class="badge bg-primary">Счет-фактура</span>
+              {% elif d.doc_type == 'CTR' %}<span class="badge bg-success">Договор</span>
+              {% elif d.doc_type == 'AGR' %}<span class="badge bg-info">Соглашение</span>
+              {% endif %}
+            </td>
+            <td>{% if d.order %}<a href="{% url 'manager_order_detail' d.order.id %}">#{{ d.order.id }}</a>{% else %}&mdash;{% endif %}</td>
+            <td>{{ d.datetime_create|date:"d.m.Y H:i" }}</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-outline-primary">Скачать</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" class="text-center text-muted">Документы не найдены</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
